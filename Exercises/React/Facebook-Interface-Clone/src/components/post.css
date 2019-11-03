@@ -1,0 +1,33 @@
+.avatar {
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.headerContents{
+  display: flex;
+  padding: 15px 0px 15px 10px;
+}
+
+.userName{
+  font-size: 14px;
+  font-weight: 800;
+  color: #4A4A4A;
+}
+
+.datePost{
+  font-size: 11px;
+  margin-top: 5px;
+  color: #9A9A9A;
+}
+
+.postContents{
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 0 0 30px 0;
+  color: #3E3E3E;
+  word-break: break-all;
+  border-bottom: 1px solid #EEEEEE;
+}

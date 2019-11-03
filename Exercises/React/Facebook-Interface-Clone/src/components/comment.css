@@ -1,0 +1,26 @@
+.avatar {
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.Comment{
+  display: flex;
+}
+
+.anwserContents {
+  font-size: 13px;
+  margin-right: 10px;
+  color: #3E3E3E;
+  word-break: break-all;
+  background: #EEEEEE;
+  border-radius: 15px;
+  padding: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.anwserContents span{
+  font-weight: 800;
+}

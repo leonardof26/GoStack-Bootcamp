@@ -1,6 +1,10 @@
 import * as Yup from 'yup'
 
 import HelpOrder from '../models/HelpOrder'
+import Student from '../models/Student'
+
+import Queue from '../../lib/Queue'
+import AnswerMail from '../jobs/AnswerMail'
 
 class HelpOrderController {
   async store(req, res) {
@@ -68,6 +72,10 @@ class HelpOrderController {
     }
 
     await helpOrder.update(req.body)
+
+    const student = await Student.findByPk(helpOrder.student_id)
+
+    await Queue.add(AnswerMail.key, { helpOrder, student })
 
     const { question } = helpOrder
 

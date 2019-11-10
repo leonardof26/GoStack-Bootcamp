@@ -25,7 +25,21 @@ class HelpOrderController {
   }
 
   async index(req, res) {
-    return res.json({ message: 'index' })
+    const schema = Yup.object().shape({
+      id: Yup.number().required(),
+    })
+
+    const studentId = req.params.id
+
+    if (!(await schema.isValid({ id: studentId })) && studentId) {
+      return res.status(400).json({ error: 'Validation Fails' })
+    }
+
+    const response = studentId
+      ? await HelpOrder.findAll({ where: { student_id: studentId } })
+      : await HelpOrder.findAll()
+
+    return res.json(response)
   }
 
   async update(req, res) {

@@ -65,6 +65,7 @@ class MembershipController {
         'start_date',
         'end_date',
         'price',
+        'active',
       ],
     })
 

@@ -5,7 +5,7 @@ import { MdAdd, MdSearch } from 'react-icons/md'
 import { Form, Input } from '@rocketseat/unform'
 import api from '../../../services/api'
 
-import { Container, PageHeader, StudentList } from './styles'
+import { Container, PageHeader, StudentList } from '../../_layouts/List/styles'
 
 export default function List() {
   const [studentsList, setStudentsList] = useState([])
@@ -74,7 +74,14 @@ export default function List() {
                 <td>{student.email}</td>
                 <td>{student.age}</td>
                 <td>
-                  <Link to={`/students/${student.id}/modify`}>APAGAR</Link>
+                  <Link
+                    to={{
+                      pathname: `/students/${student.id}/modify`,
+                      state: { student },
+                    }}
+                  >
+                    APAGAR
+                  </Link>
                 </td>
                 <td>
                   <button

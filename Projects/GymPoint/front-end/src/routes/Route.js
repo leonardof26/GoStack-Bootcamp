@@ -11,7 +11,6 @@ export default function RouteWrapper({
   isPrivate,
   ...rest
 }) {
-  console.log(rest.path)
   const { signed } = store.getState().auth
 
   if (!signed && isPrivate) {
@@ -22,7 +21,7 @@ export default function RouteWrapper({
     return <Redirect to="/students/list" />
   }
 
-  const Layout = signed && DefaultLayout
+  const Layout = signed ? DefaultLayout : <div />
 
   return (
     <Route

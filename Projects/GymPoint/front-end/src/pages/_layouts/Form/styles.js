@@ -83,6 +83,10 @@ export const StudentsForm = styled.div`
       padding: 10px;
     }
 
+    input:disabled {
+      background: #f5f5f5;
+    }
+
     span {
       color: #fb6f91;
       align-self: flex-start;
@@ -94,11 +98,18 @@ export const StudentsForm = styled.div`
 `
 export const BottomInputs = styled.div`
   display: flex;
-  justify-content: space-between;
+
+  .inputField {
+    padding-right: 10px;
+    justify-content: space-between;
+  }
+
+  > div {
+    width: fill-available;
+  }
 
   div {
     align-self: stretch;
-    width: 200px;
 
     input {
       margin-bottom: 0px;
@@ -107,5 +118,20 @@ export const BottomInputs = styled.div`
         padding: 5px;
       }
     }
+  }
+
+  div:last-of-type {
+    margin-right: 0px;
+  }
+
+  .css-2b097c-container {
+    /* background: #7159c1; */
+    height: 30px;
+  }
+
+  .css-yk16xz-control {
+    /* background: #9157c1; */
+    min-height: 30px;
+    height: 30px;
   }
 `

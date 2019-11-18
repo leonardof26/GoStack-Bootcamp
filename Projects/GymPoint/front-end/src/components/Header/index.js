@@ -25,8 +25,8 @@ export default function Header({ path }) {
             PLANOS
           </Link>
           <Link
-            to="/membership/list"
-            className={path.indexOf('membership') !== -1 ? 'currentPage' : ''}
+            to="/memberships/list"
+            className={path.indexOf('memberships') !== -1 ? 'currentPage' : ''}
           >
             MATRÍCULA
           </Link>

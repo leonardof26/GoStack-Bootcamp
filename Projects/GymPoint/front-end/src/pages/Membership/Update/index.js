@@ -1,15 +1,15 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import * as Yup from 'yup'
-import { format, parseISO } from 'date-fns'
+import PropTypes from 'prop-types'
+import { format, parseISO, addMonths } from 'date-fns'
 
 import { toast } from 'react-toastify'
 
-import { Form, Input, Choice } from '@rocketseat/unform'
+import { Form } from '@rocketseat/unform'
 import { MdCheck, MdArrowBack } from 'react-icons/md'
 import DatePicker from '../../../components/Unform/DatePicker'
 import ReactSelect from '../../../components/Unform/ReactSelect'
-import Select from 'react-select'
 
 import api from '../../../services/api'
 
@@ -22,23 +22,38 @@ import {
 } from '../../_layouts/Form/styles'
 
 export default function StudentForm({ history, location }) {
+  const membership = useMemo(
+    () => ({
+      ...location.state.membership,
+      endDateFormatted: format(
+        parseISO(location.state.membership.end_date),
+        'dd/MM/yyyy'
+      ),
+    }),
+    [location]
+  )
+
   const [plansList, setPlansList] = useState([])
+  const [studentsList, setStudentsList] = useState([])
+  const [plan, setPlan] = useState(membership.Plan.id)
+  const [student, setStudent] = useState(membership.Student.id)
+  const [initDate, setInitDate] = useState(parseISO(membership.start_date))
+  const [finalDate, setFinalDate] = useState(membership.endDateFormatted)
+  const [totalPrice, setTotalPrice] = useState(membership.price)
 
-  const { membership } = useMemo(() => location.state, [location])
+  useEffect(() => {
+    const selectedPlan = plansList.find(item => item.id === plan)
 
-  const initialData = {
-    name: membership.Student.name,
-    plan: membership.Plan.title,
-    initialDate: parseISO(membership.start_date),
-    endDate: format(parseISO(membership.end_date), 'dd/MM/yyyy'),
-    finalPrice: membership.price,
-  }
+    if (!selectedPlan) {
+      return
+    }
 
-  const schema = Yup.object().shape({
-    name: Yup.string().required('O nome é obrigatório'),
-    plan: Yup.string().required('O plano é obrigatório'),
-    initialDate: Yup.date().required('O plano é obrigatório'),
-  })
+    const newFinalDate = addMonths(initDate, selectedPlan.duration)
+    const newFinalPrice = selectedPlan.price * selectedPlan.duration
+
+    setFinalDate(format(newFinalDate, 'dd/MM/yyyy'))
+    setTotalPrice(newFinalPrice)
+  }, [plan, initDate]) // eslint-disable-line
 
   useEffect(() => {
     async function loadPlans() {
@@ -47,18 +62,45 @@ export default function StudentForm({ history, location }) {
       setPlansList(response.data)
     }
 
+    async function loadStudents() {
+      const response = await api.get('students')
+
+      setStudentsList(response.data)
+    }
+
     loadPlans()
+    loadStudents()
   }, [])
 
-  const teste = plansList.map(plan => ({
-    value: plan.title,
-    label: plan.title,
-  }))
+  const initialData = {
+    name: membership.Student.name,
+    initialDate: parseISO(membership.start_date),
+  }
 
-  console.log(teste)
+  const schema = Yup.object().shape({
+    name: Yup.string().required('O nome é obrigatório'),
+    plan: Yup.string().required('O plano é obrigatório'),
+    initialDate: Yup.date().required('O plano é obrigatório'),
+  })
 
   async function handleSubmit(data) {
-    console.log(data)
+    const reqBody = {
+      studentId: student,
+      planId: plan,
+      startDate: data.initialDate,
+    }
+
+    try {
+      await api.put(`/membership/${membership.id}`, reqBody)
+
+      toast.success('Matricula alterada com sucesso')
+
+      history.push('/memberships/list')
+    } catch (error) {
+      toast.error(
+        'Erro ao atulizar matricula. Verifique se o aluno não tem outra matricula ativa'
+      )
+    }
   }
 
   return (
@@ -67,7 +109,7 @@ export default function StudentForm({ history, location }) {
         <h1>Edição de matrícula</h1>
         <aside>
           <Button backGround="#ccc">
-            <Link to="/students/list">
+            <Link to="/memberships/list">
               <div>
                 <MdArrowBack color="#fff" size={16} />
                 <span>VOLTAR</span>
@@ -93,31 +135,60 @@ export default function StudentForm({ history, location }) {
         >
           <div>
             <p>ALUNO</p>
-            <Input name="name" placeholder="ex. Joao Silva" />
+            <ReactSelect
+              name="name"
+              defaultValue={{
+                value: membership.Student.id,
+                label: membership.Student.name,
+              }}
+              options={studentsList.map(item => ({
+                value: item.id,
+                label: item.name,
+              }))}
+              onChange={option => setStudent(option.value)}
+            />
           </div>
 
           <BottomInputs>
             <div className="inputField">
               <p>PLANO</p>
-              <Select options={teste} />
-              {/* <ReactSelect name="plan" multiple={false} options={teste} /> */}
-              {/* <Input name="plan" placeholder="ex. Joao Silva" /> */}
+              <ReactSelect
+                name="plan"
+                defaultValue={{
+                  value: membership.Plan.id,
+                  label: membership.Plan.title,
+                }}
+                options={plansList.map(item => ({
+                  value: item.id,
+                  label: item.title,
+                }))}
+                onChange={option => setPlan(option.value)}
+              />
             </div>
             <div className="inputField">
               <p>DATA DE INÍCIO</p>
-              <DatePicker name="initialDate" />
+              <DatePicker
+                name="initialDate"
+                change={date => setInitDate(date)}
+              />
             </div>
             <div className="inputField">
               <p>DATA DE TÉRMINO</p>
-              <Input name="endDate" disabled />
+              <input type="text" value={finalDate} disabled />
             </div>
             <div className="inputField">
               <p>VALOR FINAL</p>
-              <Input name="finalPrice" disabled />
+              <input type="text" value={totalPrice} disabled />
             </div>
           </BottomInputs>
         </Form>
       </StudentsForm>
     </Container>
   )
+}
+
+StudentForm.propTypes = {
+  history: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
+    .isRequired,
 }

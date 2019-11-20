@@ -21,16 +21,18 @@ export default function RouteWrapper({
     return <Redirect to="/students/list" />
   }
 
-  const Layout = signed ? DefaultLayout : <div />
-
   return (
     <Route
       {...rest}
-      render={props => (
-        <Layout>
+      render={props =>
+        signed ? (
+          <DefaultLayout>
+            <Component {...props} />
+          </DefaultLayout>
+        ) : (
           <Component {...props} />
-        </Layout>
-      )}
+        )
+      }
     />
   )
 }

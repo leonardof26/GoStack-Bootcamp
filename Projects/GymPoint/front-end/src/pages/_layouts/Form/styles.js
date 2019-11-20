@@ -126,11 +126,31 @@ export const BottomInputs = styled.div`
 
   .css-2b097c-container {
     /* background: #7159c1; */
-    height: 30px;
+    /* height: 30px; */
+    /* padding: 10px; */
   }
 
   .css-yk16xz-control {
     /* background: #9157c1; */
+    min-height: 30px;
+    height: 30px;
+  }
+
+  .css-1hwfws3 {
+    min-height: 30px;
+    height: 30px;
+
+    div {
+      align-self: none;
+    }
+  }
+
+  .css-1hwfws3 {
+    align-items: center;
+    align-content: center;
+  }
+
+  .css-1pahdxg-control {
     min-height: 30px;
     height: 30px;
   }

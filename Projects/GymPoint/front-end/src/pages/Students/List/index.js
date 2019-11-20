@@ -5,7 +5,12 @@ import { MdAdd, MdSearch } from 'react-icons/md'
 import { Form, Input } from '@rocketseat/unform'
 import api from '../../../services/api'
 
-import { Container, PageHeader, StudentList } from '../../_layouts/List/styles'
+import {
+  Container,
+  PageHeader,
+  StudentList,
+  Buttons,
+} from '../../_layouts/List/styles'
 
 export default function List() {
   const [studentsList, setStudentsList] = useState([])
@@ -58,7 +63,7 @@ export default function List() {
         </aside>
       </PageHeader>
 
-      <div className="teste">
+      <div className="tableContent">
         <StudentList>
           <thead>
             <tr>
@@ -74,22 +79,23 @@ export default function List() {
                 <td>{student.email}</td>
                 <td>{student.age}</td>
                 <td>
-                  <Link
-                    to={{
-                      pathname: `/students/${student.id}/modify`,
-                      state: { student },
-                    }}
-                  >
-                    APAGAR
-                  </Link>
-                </td>
-                <td>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteUser(student.id)}
-                  >
-                    EDITAR
-                  </button>
+                  <Buttons>
+                    <Link
+                      to={{
+                        pathname: `/students/${student.id}/modify`,
+                        state: { student },
+                      }}
+                    >
+                      APAGAR
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteUser(student.id)}
+                    >
+                      EDITAR
+                    </button>
+                  </Buttons>
                 </td>
               </tr>
             ))}

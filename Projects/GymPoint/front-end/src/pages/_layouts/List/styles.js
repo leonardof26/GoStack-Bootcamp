@@ -4,7 +4,7 @@ import { darken } from 'polished'
 export const Container = styled.div`
   padding: 20px 130px;
 
-  .teste {
+  .tableContent {
     margin-top: 10px;
   }
 `
@@ -83,6 +83,7 @@ export const StudentList = styled.table`
   table-layout: fixed;
 
   thead {
+    width: 100%;
     th {
       padding: 20px 15px;
       text-align: left;
@@ -91,6 +92,7 @@ export const StudentList = styled.table`
     }
   }
   tbody {
+    width: 100%;
     tr {
       border-bottom: 1px solid #eee;
 
@@ -112,5 +114,13 @@ export const StudentList = styled.table`
       border: none;
       background: #fff;
     }
+  }
+`
+export const Buttons = styled.div`
+  display: flex;
+  align-self: flex-end;
+
+  button {
+    margin-left: 20px;
   }
 `

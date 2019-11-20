@@ -16,7 +16,7 @@ export default function ReactSelect({
   function parseSelectValue(selectRef) {
     const selectValue = selectRef.state.value
     if (!multiple) {
-      return selectValue ? selectValue.id : ''
+      return selectValue ? selectValue.value : ''
     }
 
     return selectValue ? selectValue.map(option => option.id) : []
@@ -55,8 +55,6 @@ export default function ReactSelect({
         isMulti={multiple}
         defaultValue={getDefaultValue()}
         ref={ref}
-        getOptionValue={option => option.id}
-        getOptionLabel={option => option.title}
         {...rest}
       />
 

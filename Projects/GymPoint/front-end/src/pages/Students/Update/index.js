@@ -91,11 +91,11 @@ export default function StudentForm({ history, location }) {
           </div>
 
           <BottomInputs>
-            <div>
+            <div className="inputField">
               <p>IDADE</p>
               <Input name="age" placeholder="ex. 21" />
             </div>
-            <div>
+            <div className="inputField">
               <p>PESO(em kg)</p>
               <Input name="weight" placeholder="ex. 72.5" />
             </div>

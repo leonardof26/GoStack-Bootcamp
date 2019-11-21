@@ -83,7 +83,7 @@ export default function StudentForm({ history }) {
           </div>
 
           <BottomInputs>
-            <div>
+            <div className="inputField">
               <p>DURAÇÃO (em meses)</p>
               <Input
                 name="duration"
@@ -92,7 +92,7 @@ export default function StudentForm({ history }) {
                 value={duration}
               />
             </div>
-            <div>
+            <div className="inputField">
               <p>PREÇO MENSAL</p>
               <Input
                 name="price"

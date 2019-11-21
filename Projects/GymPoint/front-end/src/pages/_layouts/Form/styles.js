@@ -98,40 +98,21 @@ export const StudentsForm = styled.div`
 `
 export const BottomInputs = styled.div`
   display: flex;
+  width: 100%;
 
   .inputField {
     padding-right: 10px;
-    justify-content: space-between;
   }
 
   > div {
     width: fill-available;
-  }
 
-  div {
-    align-self: stretch;
-
-    input {
-      margin-bottom: 0px;
-
-      text-field {
-        padding: 5px;
-      }
+    &:last-of-type {
+      padding-right: 0;
     }
   }
 
-  div:last-of-type {
-    margin-right: 0px;
-  }
-
-  .css-2b097c-container {
-    /* background: #7159c1; */
-    /* height: 30px; */
-    /* padding: 10px; */
-  }
-
   .css-yk16xz-control {
-    /* background: #9157c1; */
     min-height: 30px;
     height: 30px;
   }

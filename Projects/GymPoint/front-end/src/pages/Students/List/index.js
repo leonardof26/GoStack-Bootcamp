@@ -86,14 +86,14 @@ export default function List() {
                         state: { student },
                       }}
                     >
-                      APAGAR
+                      EDITAR
                     </Link>
 
                     <button
                       type="button"
                       onClick={() => handleDeleteUser(student.id)}
                     >
-                      EDITAR
+                      APAGAR
                     </button>
                   </Buttons>
                 </td>

@@ -102,6 +102,10 @@ export const StudentList = styled.table`
         button {
           color: #de3b3b;
         }
+
+        .modalButton {
+          color: #4d85ee;
+        }
       }
     }
 

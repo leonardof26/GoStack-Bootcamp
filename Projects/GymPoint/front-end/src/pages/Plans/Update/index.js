@@ -45,7 +45,6 @@ export default function StudentForm({ history, location }) {
       history.push('/plans/list')
     } catch (error) {
       toast.error('Erro ao incluir plano, verifique os dados')
-      console.log(error.response)
     }
   }
 

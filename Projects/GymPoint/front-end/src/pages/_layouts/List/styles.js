@@ -94,8 +94,6 @@ export const StudentList = styled.table`
   tbody {
     width: 100%;
     tr {
-      border-bottom: 1px solid #ddd;
-
       a {
         color: #4d85ee;
       }
@@ -106,15 +104,23 @@ export const StudentList = styled.table`
         }
       }
     }
+
     td {
       padding: 10px 15px;
       text-align: left;
       width: 100%;
       border-bottom: 1px solid #f1f1f1;
     }
+
     button {
       border: none;
       background: #fff;
+    }
+
+    tr:last-of-type {
+      td {
+        border-bottom: 0;
+      }
     }
   }
 `

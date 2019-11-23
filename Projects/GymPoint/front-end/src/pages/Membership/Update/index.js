@@ -10,8 +10,10 @@ import { Form } from '@rocketseat/unform'
 import { MdCheck, MdArrowBack } from 'react-icons/md'
 import DatePicker from '../../../components/Unform/DatePicker'
 import ReactSelect from '../../../components/Unform/ReactSelect'
+import AsyncReactSelect from '../../../components/Unform/AsyncReactSelect'
 
 import api from '../../../services/api'
+import { formatPrice } from '../../../util/format'
 
 import {
   Container,
@@ -21,7 +23,7 @@ import {
   BottomInputs,
 } from '../../_layouts/Form/styles'
 
-export default function StudentForm({ history, location }) {
+export default function MembershipForm({ history, location }) {
   const membership = useMemo(
     () => ({
       ...location.state.membership,
@@ -36,10 +38,9 @@ export default function StudentForm({ history, location }) {
   const [plansList, setPlansList] = useState([])
   const [studentsList, setStudentsList] = useState([])
   const [plan, setPlan] = useState(membership.Plan.id)
-  const [student, setStudent] = useState(membership.Student.id)
   const [initDate, setInitDate] = useState(parseISO(membership.start_date))
   const [finalDate, setFinalDate] = useState(membership.endDateFormatted)
-  const [totalPrice, setTotalPrice] = useState(membership.price)
+  const [totalPrice, setTotalPrice] = useState(formatPrice(membership.price))
 
   useEffect(() => {
     const selectedPlan = plansList.find(item => item.id === plan)
@@ -52,7 +53,7 @@ export default function StudentForm({ history, location }) {
     const newFinalPrice = selectedPlan.price * selectedPlan.duration
 
     setFinalDate(format(newFinalDate, 'dd/MM/yyyy'))
-    setTotalPrice(newFinalPrice)
+    setTotalPrice(formatPrice(newFinalPrice))
   }, [plan, initDate]) // eslint-disable-line
 
   useEffect(() => {
@@ -73,17 +74,19 @@ export default function StudentForm({ history, location }) {
   }, [])
 
   const initialData = {
-    name: membership.Student.name,
+    student: membership.Student.name,
     initialDate: parseISO(membership.start_date),
   }
 
   const schema = Yup.object().shape({
-    name: Yup.string().required('O nome é obrigatório'),
+    student: Yup.number().required('O nome é obrigatório'),
     plan: Yup.string().required('O plano é obrigatório'),
     initialDate: Yup.date().required('O plano é obrigatório'),
   })
 
   async function handleSubmit(data) {
+    const { student } = data
+
     const reqBody = {
       studentId: student,
       planId: plan,
@@ -117,7 +120,7 @@ export default function StudentForm({ history, location }) {
             </Link>
           </Button>
 
-          <Button backGround="#ee4d64" type="submit" form="studentForm">
+          <Button backGround="#ee4d64" type="submit" form="dataForm">
             <div>
               <MdCheck color="#fff" size={16} />
               <span>SALVAR</span>
@@ -129,14 +132,14 @@ export default function StudentForm({ history, location }) {
       <StudentsForm>
         <Form
           schema={schema}
-          id="studentForm"
+          id="dataForm"
           onSubmit={handleSubmit}
           initialData={initialData}
         >
           <div>
             <p>ALUNO</p>
-            <ReactSelect
-              name="name"
+            <AsyncReactSelect
+              name="student"
               defaultValue={{
                 value: membership.Student.id,
                 label: membership.Student.name,
@@ -145,7 +148,6 @@ export default function StudentForm({ history, location }) {
                 value: item.id,
                 label: item.name,
               }))}
-              onChange={option => setStudent(option.value)}
             />
           </div>
 
@@ -187,7 +189,7 @@ export default function StudentForm({ history, location }) {
   )
 }
 
-StudentForm.propTypes = {
+MembershipForm.propTypes = {
   history: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
   location: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
     .isRequired,

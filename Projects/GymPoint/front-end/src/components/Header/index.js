@@ -1,12 +1,22 @@
 import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+
+import { signOut } from '../../store/modules/auth/actions'
 
 import logo from '../../assets/logo-direita.svg'
 
 import { Container, Content, Profile } from './styles'
 
 export default function Header({ path }) {
+  const dispatch = useDispatch()
+  const userName = useSelector(state => state.user.profile.name)
+
+  function handleSignout() {
+    dispatch(signOut())
+  }
+
   return (
     <Container>
       <Content path={path}>
@@ -40,8 +50,10 @@ export default function Header({ path }) {
 
         <aside>
           <Profile>
-            <strong>Rey Fucking Skywalker</strong>
-            <button type="button">sair do sistema</button>
+            <strong>{userName}</strong>
+            <button type="button" onClick={handleSignout}>
+              sair do sistema
+            </button>
           </Profile>
         </aside>
       </Content>

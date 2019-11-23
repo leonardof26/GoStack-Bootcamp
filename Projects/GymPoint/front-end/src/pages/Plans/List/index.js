@@ -1,34 +1,54 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import { MdAdd } from 'react-icons/md'
+import { MdAdd, MdCheckCircle } from 'react-icons/md'
 import api from '../../../services/api'
+import { formatPrice } from '../../../util/format'
 
-import { Container, PageHeader, StudentList } from '../../_layouts/List/styles'
+import {
+  Container,
+  PageHeader,
+  StudentList,
+  Buttons,
+} from '../../_layouts/List/styles'
 
 export default function ListPlans() {
   const [plansList, setPlansList] = useState([])
 
+  function padToTwo(num) {
+    return num < 10 ? `0${num}` : num
+  }
+
   useEffect(() => {
     async function getPlansList() {
-      const response = await api.get('/plans')
+      const response = await api.get('/plans/actives')
 
-      setPlansList(response.data)
+      setPlansList(
+        response.data.map(plan => ({
+          ...plan,
+          formattedPrice: formatPrice(plan.price),
+          formattedDuration: `${padToTwo(plan.duration)} meses`,
+        }))
+      )
     }
 
     getPlansList()
   }, [])
 
-  async function handleDeleteUser(id) {
-    await api.delete(`students/${id}`)
+  async function handleDeletePlan(id) {
+    try {
+      await api.delete(`plans/${id}`)
 
-    setPlansList(plansList.filter(student => student.id !== id))
+      setPlansList(plansList.filter(student => student.id !== id))
+    } catch (error) {
+      console.tron.log(error.response)
+    }
   }
 
   return (
     <Container>
       <PageHeader>
-        <h1>Gerenciando Alunos</h1>
+        <h1>Gerenciando Planos</h1>
         <aside>
           <div className="AddButton">
             <Link to="/plans/new">
@@ -41,7 +61,7 @@ export default function ListPlans() {
         </aside>
       </PageHeader>
 
-      <div className="teste">
+      <div className="tableContent">
         <StudentList>
           <thead>
             <tr>
@@ -54,25 +74,29 @@ export default function ListPlans() {
             {plansList.map(plan => (
               <tr key={plan.id}>
                 <td>{plan.title}</td>
-                <td>{plan.duration}</td>
-                <td>{plan.price}</td>
+                <td>{plan.formattedDuration}</td>
+                <td>{plan.formattedPrice}</td>
                 <td>
-                  <Link
-                    to={{
-                      pathname: `/plans/${plan.id}/modify`,
-                      state: { plan },
-                    }}
-                  >
-                    EDITAR
-                  </Link>
-                </td>
-                <td>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteUser(plan.id)}
-                  >
-                    APAGAR
-                  </button>
+                  <Buttons>
+                    <Link
+                      to={{
+                        pathname: `/plans/${plan.id}/modify`,
+                        state: { plan },
+                      }}
+                    >
+                      EDITAR
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        window.confirm(
+                          'Tem certeza que deseja excluir o usuário?'
+                        ) && handleDeletePlan(plan.id)
+                      }
+                    >
+                      APAGAR
+                    </button>
+                  </Buttons>
                 </td>
               </tr>
             ))}

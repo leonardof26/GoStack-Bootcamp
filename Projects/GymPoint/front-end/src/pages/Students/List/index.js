@@ -91,7 +91,11 @@ export default function List() {
 
                     <button
                       type="button"
-                      onClick={() => handleDeleteUser(student.id)}
+                      onClick={() =>
+                        window.confirm(
+                          'Tem certeza que deseja excluir o usuário?'
+                        ) && handleDeleteUser(student.id)
+                      }
                     >
                       APAGAR
                     </button>

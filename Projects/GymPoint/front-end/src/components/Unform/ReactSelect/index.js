@@ -34,16 +34,6 @@ export default function ReactSelect({
     })
   }, [ref.current, fieldName]) // eslint-disable-line
 
-  function getDefaultValue() {
-    if (!defaultValue) return null
-
-    if (!multiple) {
-      return options.find(option => option.id === defaultValue)
-    }
-
-    return options.filter(option => defaultValue.includes(option.id))
-  }
-
   return (
     <>
       {label && <label htmlFor={fieldName}>{label}</label>}
@@ -53,7 +43,6 @@ export default function ReactSelect({
         aria-label={fieldName}
         options={options}
         isMulti={multiple}
-        defaultValue={getDefaultValue()}
         ref={ref}
         {...rest}
       />

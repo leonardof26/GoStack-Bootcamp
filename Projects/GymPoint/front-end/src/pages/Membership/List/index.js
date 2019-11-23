@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
+import { format, parseISO } from 'date-fns'
+
 import { MdAdd, MdCheckCircle } from 'react-icons/md'
 import api from '../../../services/api'
 
-import { Container, PageHeader, StudentList } from '../../_layouts/List/styles'
+import {
+  Container,
+  PageHeader,
+  StudentList,
+  Buttons,
+} from '../../_layouts/List/styles'
 
 export default function MembershipsList() {
   const [membershipsList, setMembershipList] = useState([])
@@ -13,7 +20,16 @@ export default function MembershipsList() {
     async function getPlansList() {
       const response = await api.get('/membership')
 
-      setMembershipList(response.data)
+      setMembershipList(
+        response.data.map(membership => ({
+          ...membership,
+          formattedStartDate: format(
+            parseISO(membership.start_date),
+            'dd/MM/yyyy'
+          ),
+          formattedEndDate: format(parseISO(membership.end_date), 'dd/MM/yyyy'),
+        }))
+      )
     }
 
     getPlansList()
@@ -28,7 +44,7 @@ export default function MembershipsList() {
   return (
     <Container>
       <PageHeader>
-        <h1>Gerenciando matrículas</h1>
+        <h1>Gerenciando Matrículas</h1>
         <aside>
           <div className="AddButton">
             <Link to="/memberships/new">
@@ -41,7 +57,7 @@ export default function MembershipsList() {
         </aside>
       </PageHeader>
 
-      <div className="teste">
+      <div className="tableContent">
         <StudentList>
           <thead>
             <tr>
@@ -57,8 +73,8 @@ export default function MembershipsList() {
               <tr key={membership.id}>
                 <td>{membership.Student.name}</td>
                 <td>{membership.Plan.title}</td>
-                <td>{membership.start_date}</td>
-                <td>{membership.end_date}</td>
+                <td>{membership.formattedStartDate}</td>
+                <td>{membership.formattedEndDate}</td>
                 <td>
                   <MdCheckCircle
                     size={20}
@@ -66,22 +82,27 @@ export default function MembershipsList() {
                   />
                 </td>
                 <td>
-                  <Link
-                    to={{
-                      pathname: `/memberships/${membership.id}/modify`,
-                      state: { membership },
-                    }}
-                  >
-                    EDITAR
-                  </Link>
-                </td>
-                <td>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteMembership(membership.id)}
-                  >
-                    APAGAR
-                  </button>
+                  <Buttons>
+                    <Link
+                      to={{
+                        pathname: `/memberships/${membership.id}/modify`,
+                        state: { membership },
+                      }}
+                    >
+                      EDITAR
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        window.confirm(
+                          'Tem certeza que deseja excluir o usuário?'
+                        ) && handleDeleteMembership(membership.id)
+                      }
+                    >
+                      APAGAR
+                    </button>
+                  </Buttons>
                 </td>
               </tr>
             ))}

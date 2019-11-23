@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 
 import auth from './auth/reducer'
-import students from './students/reducer'
+import user from './user/reducer'
 
-export default combineReducers({ auth, students })
+export default combineReducers({ auth, user })

@@ -7,6 +7,7 @@ import { toast } from 'react-toastify'
 import InputMask from 'react-input-mask'
 import { Form, Input, useField } from '@rocketseat/unform'
 import { MdCheck, MdArrowBack } from 'react-icons/md'
+import { formatPrice } from '../../../util/format'
 
 import api from '../../../services/api'
 
@@ -47,7 +48,9 @@ export default function StudentForm({ history }) {
   useEffect(
     () =>
       setTotalPrice(
-        !isNaN(duration) && !isNaN(monthlyPrice) ? duration * monthlyPrice : 0
+        formatPrice(
+          !isNaN(duration) && !isNaN(monthlyPrice) ? duration * monthlyPrice : 0
+        )
       ),
     [duration, monthlyPrice]
   )

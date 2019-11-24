@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import Select from 'react-select'
 
 import { useField } from '@rocketseat/unform'
@@ -11,7 +12,7 @@ export default function ReactSelect({
   ...rest
 }) {
   const ref = useRef(null)
-  const { fieldName, registerField, defaultValue, error } = useField(name)
+  const { fieldName, registerField, error } = useField(name)
 
   function parseSelectValue(selectRef) {
     const selectValue = selectRef.state.value
@@ -50,4 +51,16 @@ export default function ReactSelect({
       {error && <span>{error}</span>}
     </>
   )
+}
+
+ReactSelect.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.object).isRequired,
+  multiple: PropTypes.bool,
+}
+
+ReactSelect.defaultProps = {
+  label: '',
+  multiple: false,
 }

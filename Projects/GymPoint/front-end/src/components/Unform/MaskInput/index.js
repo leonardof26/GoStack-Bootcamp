@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import NumberFormat from 'react-number-format'
+import PropTypes from 'prop-types'
 
 import { useField } from '@rocketseat/unform'
 
@@ -34,4 +35,8 @@ export default function MaskInput({ name, ...rest }) {
       {error && <span>{error}</span>}
     </>
   )
+}
+
+MaskInput.propTypes = {
+  name: PropTypes.string.isRequired,
 }

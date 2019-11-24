@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import * as Yup from 'yup'
 
 import { toast } from 'react-toastify'
@@ -18,7 +19,7 @@ import {
   BottomInputs,
 } from '../../_layouts/Form/styles'
 
-export default function StudentForm({ history }) {
+export default function StudentCreate({ history }) {
   const schema = Yup.object().shape({
     name: Yup.string().required('O nome é obrigatório'),
     email: Yup.string()
@@ -74,11 +75,7 @@ export default function StudentForm({ history }) {
       </PageHeader>
 
       <StudentsForm>
-        <Form
-          // schema={schema}
-          id="studentForm"
-          onSubmit={handleSubmit}
-        >
+        <Form schema={schema} id="studentForm" onSubmit={handleSubmit}>
           <div>
             <p>NOME COMPLETO</p>
             <Input name="name" placeholder="ex. Joao Silva" />
@@ -116,4 +113,8 @@ export default function StudentForm({ history }) {
       </StudentsForm>
     </Container>
   )
+}
+
+StudentCreate.propTypes = {
+  history: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
 }

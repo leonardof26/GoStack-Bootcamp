@@ -1,11 +1,12 @@
 import React, { useRef, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import AsyncSelect from 'react-select/async'
 
 import { useField } from '@rocketseat/unform'
 
-export default function ReactSelect({ name, label, options, teste, ...rest }) {
+export default function ReactSelect({ name, label, options, ...rest }) {
   const ref = useRef(null)
-  const { fieldName, registerField, defaultValue, error } = useField(name)
+  const { fieldName, registerField, error } = useField(name)
 
   function parseSelectValue(selectRef) {
     const selectValue = selectRef.select.state.value
@@ -39,12 +40,6 @@ export default function ReactSelect({ name, label, options, teste, ...rest }) {
     })
   }
 
-  function getDefaultValue() {
-    if (!defaultValue) return null
-
-    return [options.find(option => option.label === defaultValue)]
-  }
-
   return (
     <>
       {label && <label htmlFor={fieldName}>{label}</label>}
@@ -61,4 +56,14 @@ export default function ReactSelect({ name, label, options, teste, ...rest }) {
       {error && <span>{error}</span>}
     </>
   )
+}
+
+ReactSelect.propTypes = {
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.object).isRequired,
+}
+
+ReactSelect.defaultProps = {
+  label: '',
 }

@@ -1,11 +1,11 @@
 import React, { useMemo, useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import * as Yup from 'yup'
 
 import { toast } from 'react-toastify'
 
-import InputMask from 'react-input-mask'
-import { Form, Input, useField } from '@rocketseat/unform'
+import { Form, Input } from '@rocketseat/unform'
 import { MdCheck, MdArrowBack } from 'react-icons/md'
 import { formatPrice } from '../../../util/format'
 import MaskInput from '../../../components/Unform/MaskInput'
@@ -20,7 +20,7 @@ import {
   BottomInputs,
 } from '../../_layouts/Form/styles'
 
-export default function StudentForm({ history, location }) {
+export default function StudentUpdate({ history, location }) {
   const { plan } = useMemo(() => location.state, [location])
 
   const [planName, setPlanName] = useState('')
@@ -49,15 +49,14 @@ export default function StudentForm({ history, location }) {
     }
   }
 
-  useEffect(
-    () =>
-      setTotalPrice(
-        formatPrice(
-          !isNaN(duration) && !isNaN(monthlyPrice) ? duration * monthlyPrice : 0
-        )
-      ),
-    [duration, monthlyPrice]
-  )
+  useEffect(() => {
+    const duartionNum = parseInt(duration, 10)
+    const priceNum = parseInt(monthlyPrice, 10)
+
+    setTotalPrice(
+      formatPrice(typeof duartionNum && priceNum ? duartionNum * priceNum : 0)
+    )
+  }, [duration, monthlyPrice])
 
   useEffect(() => {
     setMonthlyPrice(plan.price)
@@ -135,4 +134,11 @@ export default function StudentForm({ history, location }) {
       </StudentsForm>
     </Container>
   )
+}
+
+StudentUpdate.propTypes = {
+  history: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
+  location: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object])
+  ).isRequired,
 }

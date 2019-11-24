@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import * as Yup from 'yup'
 
@@ -18,7 +19,7 @@ import {
   BottomInputs,
 } from '../../_layouts/Form/styles'
 
-export default function StudentForm({ history, location }) {
+export default function StudentUpdate({ history, location }) {
   const student = useMemo(
     () => ({
       ...location.state.student,
@@ -26,7 +27,6 @@ export default function StudentForm({ history, location }) {
     }),
     [location]
   )
-  console.log(student)
 
   const schema = Yup.object().shape({
     name: Yup.string().required('O nome é obrigatório'),
@@ -48,15 +48,12 @@ export default function StudentForm({ history, location }) {
       `${height.substring(0, 1)}.${height.substring(1, 3) || 0}`,
       10
     )
-    console.log(height)
-    console.log(formattedHeight)
 
     try {
-      const responnse = await api.put('students', {
+      await api.put('students', {
         ...data,
         height: formattedHeight,
       })
-      console.log(responnse)
       toast.success('Usuario atualizado com sucesso')
       history.push('/students/list')
     } catch (error) {
@@ -132,4 +129,10 @@ export default function StudentForm({ history, location }) {
       </StudentsForm>
     </Container>
   )
+}
+
+StudentUpdate.propTypes = {
+  history: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
+  location: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
+    .isRequired,
 }

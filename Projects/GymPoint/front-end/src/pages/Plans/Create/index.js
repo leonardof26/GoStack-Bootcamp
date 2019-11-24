@@ -1,11 +1,11 @@
-import React, { useMemo, useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import * as Yup from 'yup'
 
 import { toast } from 'react-toastify'
 
-import InputMask from 'react-input-mask'
-import { Form, Input, useField } from '@rocketseat/unform'
+import { Form, Input } from '@rocketseat/unform'
 import { MdCheck, MdArrowBack } from 'react-icons/md'
 import { formatPrice } from '../../../util/format'
 import MaskInput from '../../../components/Unform/MaskInput'
@@ -20,7 +20,7 @@ import {
   BottomInputs,
 } from '../../_layouts/Form/styles'
 
-export default function StudentForm({ history }) {
+export default function PlanCreate({ history }) {
   const [duration, setDuration] = useState()
   const [monthlyPrice, setMonthlyPrice] = useState()
   const [totalPrice, setTotalPrice] = useState()
@@ -36,27 +36,24 @@ export default function StudentForm({ history }) {
   })
 
   async function handleSubmit(data) {
-    console.log(data)
     try {
       await api.post('plans', data)
 
       toast.success('Plano incluido com sucesso')
       history.push('/plans/list')
     } catch (error) {
-      console.log(error.response)
       toast.error('Erro ao incluir plano, verifique os dados')
     }
   }
 
-  useEffect(
-    () =>
-      setTotalPrice(
-        formatPrice(
-          !isNaN(duration) && !isNaN(monthlyPrice) ? duration * monthlyPrice : 0
-        )
-      ),
-    [duration, monthlyPrice]
-  )
+  useEffect(() => {
+    const duartionNum = parseInt(duration, 10)
+    const priceNum = parseInt(monthlyPrice, 10)
+
+    setTotalPrice(
+      formatPrice(typeof duartionNum && priceNum ? duartionNum * priceNum : 0)
+    )
+  }, [duration, monthlyPrice])
 
   return (
     <Container>
@@ -117,4 +114,7 @@ export default function StudentForm({ history }) {
       </StudentsForm>
     </Container>
   )
+}
+PlanCreate.propTypes = {
+  history: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
 }

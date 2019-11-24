@@ -43,7 +43,7 @@ export default function ListPlans() {
 
   useEffect(() => {
     getPlansList(1)
-  }, [])
+  }, []) // eslint-disable-line
 
   async function handleDeletePlan(id) {
     try {
@@ -112,7 +112,7 @@ export default function ListPlans() {
                       type="button"
                       onClick={() =>
                         window.confirm(
-                          'Tem certeza que deseja excluir o usuário?'
+                          'Tem certeza que deseja excluir o plano?'
                         ) && handleDeletePlan(plan.id)
                       }
                     >

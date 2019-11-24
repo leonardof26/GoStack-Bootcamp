@@ -1,11 +1,12 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import Modal from 'react-bootstrap/Modal'
 
 import { toast } from 'react-toastify'
 import * as Yup from 'yup'
 
-import { Form, Textarea } from '@rocketseat/unform'
+import { Form, Input } from '@rocketseat/unform'
 
 import { Container, Button, Question, Answer } from './styles'
 
@@ -44,12 +45,17 @@ export default function HelpOrderModal({ show, helpOrder, handleClose }) {
           <Form onSubmit={handleSubmit} schema={schema}>
             <Answer>
               <h3>SUA RESPOSTA</h3>
-              <Textarea
-                name="answer"
-                placeholder="Digite sua resposta aqui"
-                disabled={helpOrder.answer || false}
-                value={helpOrder.answer || null}
-              />
+              {helpOrder.answer ? (
+                <p>{helpOrder.answer}</p>
+              ) : (
+                <Input
+                  multiline
+                  name="answer"
+                  placeholder="Digite sua resposta aqui"
+                  disabled={helpOrder.answer || false}
+                  defaultValue={helpOrder.answer || ''}
+                />
+              )}
             </Answer>
             <Button type="submit">Responder Aluno</Button>
           </Form>
@@ -57,4 +63,16 @@ export default function HelpOrderModal({ show, helpOrder, handleClose }) {
       </Modal>
     </Container>
   )
+}
+
+HelpOrderModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  helpOrder: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object])
+  ),
+  handleClose: PropTypes.func.isRequired,
+}
+
+HelpOrderModal.defaultProps = {
+  helpOrder: {},
 }

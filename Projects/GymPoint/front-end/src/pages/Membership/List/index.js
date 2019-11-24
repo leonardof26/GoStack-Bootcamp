@@ -123,7 +123,7 @@ export default function MembershipsList() {
                       type="button"
                       onClick={() =>
                         window.confirm(
-                          'Tem certeza que deseja excluir o usuário?'
+                          'Tem certeza que deseja excluir a matricula?'
                         ) && handleDeleteMembership(membership.id)
                       }
                     >

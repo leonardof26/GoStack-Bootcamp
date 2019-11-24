@@ -23,7 +23,7 @@ import {
   BottomInputs,
 } from '../../_layouts/Form/styles'
 
-export default function MembershipForm({ history, location }) {
+export default function MembershipUpdate({ history, location }) {
   const membership = useMemo(
     () => ({
       ...location.state.membership,
@@ -79,9 +79,13 @@ export default function MembershipForm({ history, location }) {
   }
 
   const schema = Yup.object().shape({
-    student: Yup.number().required('O nome é obrigatório'),
+    student: Yup.number()
+      .typeError('Favor escolha um estudante')
+      .required('Favor escolha um estudante'),
     plan: Yup.string().required('O plano é obrigatório'),
-    initialDate: Yup.date().required('O plano é obrigatório'),
+    initialDate: Yup.date()
+      .typeError('Favor selecionar data de inicio')
+      .required('Favor selecionar data de inicio'),
   })
 
   async function handleSubmit(data) {
@@ -189,7 +193,7 @@ export default function MembershipForm({ history, location }) {
   )
 }
 
-MembershipForm.propTypes = {
+MembershipUpdate.propTypes = {
   history: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
   location: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
     .isRequired,

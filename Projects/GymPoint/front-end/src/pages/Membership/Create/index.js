@@ -23,7 +23,7 @@ import {
   BottomInputs,
 } from '../../_layouts/Form/styles'
 
-export default function MembershipForm({ history }) {
+export default function MembershipCreate({ history }) {
   const [plansList, setPlansList] = useState([])
   const [studentsList, setStudentsList] = useState([])
   const [plan, setPlan] = useState('')
@@ -63,9 +63,13 @@ export default function MembershipForm({ history }) {
   }, [])
 
   const schema = Yup.object().shape({
-    student: Yup.number().required('O nome é obrigatório'),
+    student: Yup.number()
+      .typeError('Favor escolha um estudante')
+      .required('Favor escolha um estudante'),
     plan: Yup.string().required('O plano é obrigatório'),
-    initialDate: Yup.date().required('O plano é obrigatório'),
+    initialDate: Yup.date()
+      .typeError('Favor selecionar data de inicio')
+      .required('Favor selecionar data de inicio'),
   })
 
   async function handleSubmit(data) {
@@ -169,6 +173,6 @@ export default function MembershipForm({ history }) {
   )
 }
 
-MembershipForm.propTypes = {
+MembershipCreate.propTypes = {
   history: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
 }

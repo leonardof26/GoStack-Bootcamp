@@ -7,6 +7,7 @@ class Plan extends Model {
         title: Sequelize.STRING,
         duration: Sequelize.INTEGER,
         price: Sequelize.INTEGER,
+        active: Sequelize.BOOLEAN,
       },
       { sequelize }
     )

@@ -1,9 +1,12 @@
 import * as Yup from 'yup'
-import { addMonths, parseISO } from 'date-fns'
+import { addMonths, parseISO, format } from 'date-fns'
 
 import Membership from '../models/Membership'
 import Student from '../models/Student'
 import Plan from '../models/Plan'
+
+import Queue from '../../lib/Queue'
+import WelcomeMail from '../jobs/WelcomeMail'
 
 class MembershipController {
   async store(req, res) {
@@ -53,6 +56,15 @@ class MembershipController {
       price,
     })
 
+    const formattedEndDate = format(membership.end_date, 'dd/MM/yyyy')
+
+    await Queue.add(WelcomeMail.key, {
+      membership,
+      student,
+      plan,
+      formattedEndDate,
+    })
+
     return res.json(membership)
   }
 
@@ -67,6 +79,10 @@ class MembershipController {
         'price',
         'active',
       ],
+      include: [
+        { model: Student, attributes: ['id', 'name'] },
+        { model: Plan, attributes: ['id', 'title'] },
+      ],
     })
 
     return res.json(mbrships)
@@ -74,25 +90,36 @@ class MembershipController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
+      id: Yup.number().required(),
       studentId: Yup.number().required(),
       planId: Yup.number().required(),
       startDate: Yup.date().required(),
     })
 
-    if (!(await schema.isValid(req.body))) {
+    const { id } = req.params
+
+    if (!(await schema.isValid({ id, ...req.body }))) {
       return res.status(400).json({ error: 'Validation Fails' })
     }
 
     const { studentId, planId, startDate } = req.body
 
-    const mbrshipExists = await Membership.findOne({
-      where: { student_id: studentId },
-    })
+    const membership = await Membership.findByPk(id)
 
-    if (!mbrshipExists) {
-      return res
-        .status(400)
-        .json({ error: 'Student does not have a membership' })
+    if (!membership) {
+      return res.status(400).json({ error: 'Membership does not exists' })
+    }
+
+    if (membership.student_id !== studentId) {
+      const userMembership = await Membership.findOne({
+        where: { student_id: studentId },
+      })
+
+      if (userMembership) {
+        return res
+          .status(400)
+          .json({ error: 'Student already has activated membership' })
+      }
     }
 
     const plan = await Plan.findByPk(planId)
@@ -105,7 +132,7 @@ class MembershipController {
 
     const price = plan.duration * plan.price
 
-    const membership = await Membership.create({
+    const newMembership = await membership.update({
       student_id: studentId,
       plan_id: planId,
       start_date: startDate,
@@ -113,32 +140,30 @@ class MembershipController {
       price,
     })
 
-    return res.json(membership)
+    return res.json(newMembership)
   }
 
   async delete(req, res) {
     const schema = Yup.object().shape({
-      studentId: Yup.number().required(),
+      id: Yup.number().required(),
     })
 
-    if (!(await schema.isValid(req.body))) {
+    const { id } = req.params
+
+    if (!(await schema.isValid({ id }))) {
       return res.status(400).json({ error: 'Validation Fails' })
     }
 
-    const mbrshipExists = await Membership.findOne({
-      where: { student_id: req.body.studentId },
-    })
+    const mbrshipExists = await Membership.findByPk(id)
 
     if (!mbrshipExists) {
-      return res
-        .status(400)
-        .json({ error: 'Student does not have a membership' })
+      return res.status(400).json({ error: 'Membership does not exists' })
     }
 
-    await Membership.destroy({ where: { student_id: req.body.studentId } })
+    await Membership.destroy({ where: { id } })
 
     return res.json({
-      message: `Membership from student: ${req.body.studentId} deleted successful`,
+      message: `Membership: ${id} deleted successfully`,
     })
   }
 }

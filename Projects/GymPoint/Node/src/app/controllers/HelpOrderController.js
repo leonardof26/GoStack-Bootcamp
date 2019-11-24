@@ -40,8 +40,13 @@ class HelpOrderController {
     }
 
     const response = studentId
-      ? await HelpOrder.findAll({ where: { student_id: studentId } })
-      : await HelpOrder.findAll()
+      ? await HelpOrder.findAll({
+          where: { student_id: studentId },
+          include: [{ model: Student, attributes: ['id', 'name'] }],
+        })
+      : await HelpOrder.findAll({
+          include: [{ model: Student, attributes: ['id', 'name'] }],
+        })
 
     return res.json(response)
   }

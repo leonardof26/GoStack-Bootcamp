@@ -25,14 +25,26 @@ class PlanController {
       return res.status(400).json({ error: 'Plan already exists' })
     }
 
-    const { title, duration, price } = await Plan.create(req.body)
+    const { title, duration, price } = await Plan.create({
+      ...req.body,
+      active: true,
+    })
 
     return res.json({ title, duration, price })
   }
 
   async index(req, res) {
+    if (req.route.path === '/plans/actives') {
+      const plans = await Plan.findAll({
+        where: { active: true },
+        attributes: ['id', 'title', 'duration', 'price', 'active'],
+      })
+
+      return res.json(plans)
+    }
+
     const plans = await Plan.findAll({
-      attributes: ['id', 'title', 'duration', 'price'],
+      attributes: ['id', 'title', 'duration', 'price', 'active'],
     })
 
     return res.json(plans)
@@ -40,49 +52,51 @@ class PlanController {
 
   async update(req, res) {
     const schema = Yup.object().shape({
+      id: Yup.number().required(),
       title: Yup.string().required(),
-      newTitle: Yup.string(),
       duration: Yup.number()
         .moreThan(0)
         .lessThan(13),
       price: Yup.number().moreThan(0),
     })
 
-    if (!(await schema.isValid(req.body))) {
+    const { id } = req.params
+
+    if (!(await schema.isValid({ id, ...req.body }))) {
       return res.status(400).json({ error: 'Validation Fails' })
     }
 
-    const { title } = req.body
-
-    const plan = await Plan.findOne({ where: { title } })
+    const plan = await Plan.findByPk(id)
 
     if (!plan) {
       return res.status(400).json({ error: 'plan does not exists' })
     }
 
-    const { duration, price } = await plan.update(req.body)
+    const { title, duration, price } = await plan.update(req.body)
 
     return res.json({ title, duration, price })
   }
 
   async delete(req, res) {
     const schema = Yup.object().shape({
-      title: Yup.string().required(),
+      id: Yup.number().required(),
     })
 
-    if (!(await schema.isValid(req.body))) {
+    const { id } = req.params
+
+    if (!(await schema.isValid({ id }))) {
       return res.status(400).json({ error: 'Validation Fails' })
     }
 
-    const plan = await Plan.findOne({ where: { title: req.body.title } })
+    const plan = await Plan.findByPk(id)
 
     if (!plan) {
       return res.status(400).json({ error: 'plan does not exists' })
     }
 
-    await Plan.destroy({ where: { title: req.body.title } })
+    await plan.update({ active: false })
 
-    return res.json({ message: `Plan ${req.body.title} deleted successful` })
+    return res.json({ message: `Plan ${id} desativated successful` })
   }
 }
 

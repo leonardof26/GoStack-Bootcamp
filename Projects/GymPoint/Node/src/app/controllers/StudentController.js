@@ -1,8 +1,11 @@
 import * as Yup from 'yup'
+import { Op } from 'sequelize'
+
 import Student from '../models/Student'
 
 class StudentController {
   async store(req, res) {
+    console.log(req)
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string()
@@ -53,7 +56,9 @@ class StudentController {
     }
 
     const response = student
-      ? await Student.findAll({ where: { name: student } })
+      ? await Student.findAll({
+          where: { name: { [Op.like]: `%${student}%` } },
+        })
       : await Student.findAll()
 
     return res.json(response)
@@ -96,6 +101,30 @@ class StudentController {
     const { id, name, age, height, weight } = await student.update(req.body)
 
     return res.json({ id, name, email, age, height, weight })
+  }
+
+  async delete(req, res) {
+    const schema = Yup.object().shape({
+      student: Yup.number().required(),
+    })
+
+    const studentId = req.params.student
+
+    if (!(await schema.isValid({ student: studentId }))) {
+      return res.status(400).json({ error: 'Validation Fails' })
+    }
+
+    const student = Student.findByPk(studentId)
+
+    if (!student) {
+      return res.status(400).json({ error: 'Student does not exists' })
+    }
+
+    await Student.destroy({ where: { id: studentId } })
+
+    return res.json({
+      message: `Student: ${student.id} deleted successful`,
+    })
   }
 }
 

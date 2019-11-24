@@ -8,6 +8,7 @@ import InputMask from 'react-input-mask'
 import { Form, Input, useField } from '@rocketseat/unform'
 import { MdCheck, MdArrowBack } from 'react-icons/md'
 import { formatPrice } from '../../../util/format'
+import MaskInput from '../../../components/Unform/MaskInput'
 
 import api from '../../../services/api'
 
@@ -35,12 +36,14 @@ export default function StudentForm({ history }) {
   })
 
   async function handleSubmit(data) {
+    console.log(data)
     try {
       await api.post('plans', data)
 
       toast.success('Plano incluido com sucesso')
       history.push('/plans/list')
     } catch (error) {
+      console.log(error.response)
       toast.error('Erro ao incluir plano, verifique os dados')
     }
   }
@@ -97,11 +100,12 @@ export default function StudentForm({ history }) {
             </div>
             <div className="inputField">
               <p>PREÇO MENSAL</p>
-              <Input
+              <MaskInput
                 name="price"
+                thousandSeparator
+                prefix="R$"
                 placeholder="ex. R$120.12"
-                onChange={e => setMonthlyPrice(e.target.value)}
-                value={monthlyPrice}
+                onValueChange={input => setMonthlyPrice(input.value)}
               />
             </div>
             <div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import { MdAdd, MdSearch } from 'react-icons/md'
+import { MdAdd, MdSearch, MdArrowBack, MdArrowForward } from 'react-icons/md'
 import { Form, Input } from '@rocketseat/unform'
 import api from '../../../services/api'
 
@@ -10,19 +10,29 @@ import {
   PageHeader,
   StudentList,
   Buttons,
+  Pagination,
 } from '../../_layouts/List/styles'
 
 export default function List() {
   const [studentsList, setStudentsList] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [lastPage, setLastPage] = useState(false)
 
-  useEffect(() => {
-    async function getStudentsList() {
-      const response = await api.get('/students')
+  async function getStudentsList(page) {
+    const response = await api.get(`students/${page}`)
 
-      setStudentsList(response.data)
+    setStudentsList(response.data.slice(0, 10))
+
+    if (response.data.length < 11) {
+      setLastPage(true)
+      return
     }
 
-    getStudentsList()
+    setLastPage(false)
+  }
+
+  useEffect(() => {
+    getStudentsList(1)
   }, [])
 
   async function filerStudentByName(data) {
@@ -36,6 +46,18 @@ export default function List() {
     await api.delete(`students/${id}`)
 
     setStudentsList(studentsList.filter(student => student.id !== id))
+  }
+
+  async function handleNextPage() {
+    if (lastPage) return
+    getStudentsList(currentPage + 1)
+    setCurrentPage(currentPage + 1)
+  }
+
+  async function handlePreviousPage() {
+    if (currentPage < 1) return
+    setCurrentPage(currentPage - 1)
+    getStudentsList(currentPage - 1)
   }
 
   return (
@@ -106,6 +128,25 @@ export default function List() {
           </tbody>
         </StudentList>
       </div>
+
+      <Pagination>
+        <button
+          type="button"
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          <MdArrowBack
+            size={20}
+            color={currentPage === 1 ? '#ddd' : '#ee4d64'}
+          />
+        </button>
+
+        <span>{currentPage}</span>
+
+        <button type="button" onClick={handleNextPage} disabled={lastPage}>
+          <MdArrowForward size={20} color={lastPage ? '#ddd' : '#ee4d64'} />
+        </button>
+      </Pagination>
     </Container>
   )
 }

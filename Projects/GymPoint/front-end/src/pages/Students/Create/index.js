@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 
 import { Form, Input } from '@rocketseat/unform'
 import { MdCheck, MdArrowBack } from 'react-icons/md'
+import MaskInput from '../../../components/Unform/MaskInput'
 
 import api from '../../../services/api'
 
@@ -29,14 +30,18 @@ export default function StudentForm({ history }) {
     weight: Yup.number()
       .typeError('Favor digitar peso valido')
       .required('O peso é obrigatório'),
-    height: Yup.number()
-      .typeError('Favor digitar altura valida')
-      .required('A altura é obrigatória'),
+    height: Yup.string().required('A altura é obrigatória'),
   })
 
   async function handleSubmit(data) {
+    const { height } = data
+    const formattedHeight = `${height.substring(0, 1)}.${height.substring(
+      1,
+      3
+    ) || 0}`
+
     try {
-      await api.post('students', data)
+      await api.post('students', { ...data, height: formattedHeight })
 
       toast.success('Usuario incluido com sucesso')
       history.push('/students/list')
@@ -69,7 +74,11 @@ export default function StudentForm({ history }) {
       </PageHeader>
 
       <StudentsForm>
-        <Form schema={schema} id="studentForm" onSubmit={handleSubmit}>
+        <Form
+          // schema={schema}
+          id="studentForm"
+          onSubmit={handleSubmit}
+        >
           <div>
             <p>NOME COMPLETO</p>
             <Input name="name" placeholder="ex. Joao Silva" />
@@ -94,7 +103,13 @@ export default function StudentForm({ history }) {
             </div>
             <div>
               <p>ALTURA</p>
-              <Input name="height" placeholder="ex. 1.72" />
+              <MaskInput
+                name="height"
+                suffix="M"
+                decimalSeparator="."
+                format="#.##M"
+                placeholder="ex. 1.72"
+              />
             </div>
           </BottomInputs>
         </Form>

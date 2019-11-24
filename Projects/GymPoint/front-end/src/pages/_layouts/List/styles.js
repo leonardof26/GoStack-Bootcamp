@@ -136,3 +136,22 @@ export const Buttons = styled.div`
     margin-left: 20px;
   }
 `
+export const Pagination = styled.div`
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  span {
+    padding: 0 5px;
+  }
+
+  button {
+    border: none;
+    background: none;
+
+    :disabled {
+      cursor: initial;
+    }
+  }
+`

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 
 import { Form, Input } from '@rocketseat/unform'
 import { MdCheck, MdArrowBack } from 'react-icons/md'
+import MaskInput from '../../../components/Unform/MaskInput'
 
 import api from '../../../services/api'
 
@@ -18,7 +19,14 @@ import {
 } from '../../_layouts/Form/styles'
 
 export default function StudentForm({ history, location }) {
-  const { student } = useMemo(() => location.state, [location])
+  const student = useMemo(
+    () => ({
+      ...location.state.student,
+      heightInCm: location.state.student.height * 100,
+    }),
+    [location]
+  )
+  console.log(student)
 
   const schema = Yup.object().shape({
     name: Yup.string().required('O nome é obrigatório'),
@@ -31,15 +39,24 @@ export default function StudentForm({ history, location }) {
     weight: Yup.number()
       .typeError('Favor digitar peso valido')
       .required('O peso é obrigatório'),
-    height: Yup.number()
-      .typeError('Favor digitar altura valida')
-      .required('A altura é obrigatória'),
+    height: Yup.string().required('A altura é obrigatória'),
   })
 
   async function handleSubmit(data) {
-    try {
-      await api.put('students', data)
+    const { height } = data
+    const formattedHeight = parseFloat(
+      `${height.substring(0, 1)}.${height.substring(1, 3) || 0}`,
+      10
+    )
+    console.log(height)
+    console.log(formattedHeight)
 
+    try {
+      const responnse = await api.put('students', {
+        ...data,
+        height: formattedHeight,
+      })
+      console.log(responnse)
       toast.success('Usuario atualizado com sucesso')
       history.push('/students/list')
     } catch (error) {
@@ -101,7 +118,14 @@ export default function StudentForm({ history, location }) {
             </div>
             <div>
               <p>ALTURA</p>
-              <Input name="height" placeholder="ex. 1.72" />
+              <MaskInput
+                name="height"
+                suffix="M"
+                decimalSeparator="."
+                format="#.##M"
+                placeholder="ex. 1.72"
+                defaultValue={student.heightInCm}
+              />
             </div>
           </BottomInputs>
         </Form>

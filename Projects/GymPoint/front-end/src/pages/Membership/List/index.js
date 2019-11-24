@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom'
 
 import { format, parseISO } from 'date-fns'
 
-import { MdAdd, MdCheckCircle } from 'react-icons/md'
+import {
+  MdAdd,
+  MdCheckCircle,
+  MdArrowBack,
+  MdArrowForward,
+} from 'react-icons/md'
 import api from '../../../services/api'
 
 import {
@@ -11,34 +16,56 @@ import {
   PageHeader,
   StudentList,
   Buttons,
+  Pagination,
 } from '../../_layouts/List/styles'
 
 export default function MembershipsList() {
   const [membershipsList, setMembershipList] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [lastPage, setLastPage] = useState(false)
 
-  useEffect(() => {
-    async function getPlansList() {
-      const response = await api.get('/membership')
+  async function getMembershipList(page) {
+    const response = await api.get(`/membership/${page}`)
 
-      setMembershipList(
-        response.data.map(membership => ({
-          ...membership,
-          formattedStartDate: format(
-            parseISO(membership.start_date),
-            'dd/MM/yyyy'
-          ),
-          formattedEndDate: format(parseISO(membership.end_date), 'dd/MM/yyyy'),
-        }))
-      )
+    setMembershipList(
+      response.data.slice(0, 10).map(membership => ({
+        ...membership,
+        formattedStartDate: format(
+          parseISO(membership.start_date),
+          'dd/MM/yyyy'
+        ),
+        formattedEndDate: format(parseISO(membership.end_date), 'dd/MM/yyyy'),
+      }))
+    )
+
+    if (response.data.length < 11) {
+      setLastPage(true)
+      return
     }
 
-    getPlansList()
+    setLastPage(false)
+  }
+
+  useEffect(() => {
+    getMembershipList(1)
   }, [])
 
   async function handleDeleteMembership(id) {
     await api.delete(`membership/${id}`)
 
     setMembershipList(membershipsList.filter(student => student.id !== id))
+  }
+
+  async function handleNextPage() {
+    if (lastPage) return
+    getMembershipList(currentPage + 1)
+    setCurrentPage(currentPage + 1)
+  }
+
+  async function handlePreviousPage() {
+    if (currentPage < 1) return
+    setCurrentPage(currentPage - 1)
+    getMembershipList(currentPage - 1)
   }
 
   return (
@@ -109,6 +136,25 @@ export default function MembershipsList() {
           </tbody>
         </StudentList>
       </div>
+
+      <Pagination>
+        <button
+          type="button"
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          <MdArrowBack
+            size={20}
+            color={currentPage === 1 ? '#ddd' : '#ee4d64'}
+          />
+        </button>
+
+        <span>{currentPage}</span>
+
+        <button type="button" onClick={handleNextPage} disabled={lastPage}>
+          <MdArrowForward size={20} color={lastPage ? '#ddd' : '#ee4d64'} />
+        </button>
+      </Pagination>
     </Container>
   )
 }

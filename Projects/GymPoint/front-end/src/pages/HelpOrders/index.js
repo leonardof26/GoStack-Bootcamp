@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { MdCheckCircle } from 'react-icons/md'
+import { MdCheckCircle, MdArrowBack, MdArrowForward } from 'react-icons/md'
 
 import api from '../../services/api'
 
@@ -11,26 +11,48 @@ import {
   PageHeader,
   StudentList,
   Buttons,
+  Pagination,
 } from '../_layouts/List/styles'
 
 export default function HelpOrder() {
   const [helpOrderList, setHelpOrderList] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [selectedQuestion, setSelectedQuestion] = useState()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [lastPage, setLastPage] = useState(false)
 
-  useEffect(() => {
-    async function getHelpOrderList() {
-      const response = await api.get('/help-orders')
+  async function getHelpOrderList(page) {
+    const response = await api.get(`/help-orders/${page}`)
 
-      setHelpOrderList(response.data)
+    setHelpOrderList(response.data.slice(0, 10))
+
+    if (response.data.length < 11) {
+      setLastPage(true)
+      return
     }
 
-    getHelpOrderList()
+    setLastPage(false)
+  }
+
+  useEffect(() => {
+    getHelpOrderList(1)
   }, [showModal])
 
   function handleOpenModal(question) {
     setSelectedQuestion(question)
     setShowModal(true)
+  }
+
+  async function handleNextPage() {
+    if (lastPage) return
+    getHelpOrderList(currentPage + 1)
+    setCurrentPage(currentPage + 1)
+  }
+
+  async function handlePreviousPage() {
+    if (currentPage < 1) return
+    setCurrentPage(currentPage - 1)
+    getHelpOrderList(currentPage - 1)
   }
 
   return (
@@ -73,6 +95,25 @@ export default function HelpOrder() {
           </tbody>
         </StudentList>
       </div>
+
+      <Pagination>
+        <button
+          type="button"
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          <MdArrowBack
+            size={20}
+            color={currentPage === 1 ? '#ddd' : '#ee4d64'}
+          />
+        </button>
+
+        <span>{currentPage}</span>
+
+        <button type="button" onClick={handleNextPage} disabled={lastPage}>
+          <MdArrowForward size={20} color={lastPage ? '#ddd' : '#ee4d64'} />
+        </button>
+      </Pagination>
 
       <HelpOrderModal
         show={showModal}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import { MdAdd, MdCheckCircle } from 'react-icons/md'
+import { MdAdd, MdArrowBack, MdArrowForward } from 'react-icons/md'
 import api from '../../../services/api'
 import { formatPrice } from '../../../util/format'
 
@@ -10,29 +10,39 @@ import {
   PageHeader,
   StudentList,
   Buttons,
+  Pagination,
 } from '../../_layouts/List/styles'
 
 export default function ListPlans() {
   const [plansList, setPlansList] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [lastPage, setLastPage] = useState(false)
 
   function padToTwo(num) {
     return num < 10 ? `0${num}` : num
   }
 
-  useEffect(() => {
-    async function getPlansList() {
-      const response = await api.get('/plans/actives')
+  async function getPlansList(page) {
+    const response = await api.get(`/plans/actives/${page}`)
 
-      setPlansList(
-        response.data.map(plan => ({
-          ...plan,
-          formattedPrice: formatPrice(plan.price),
-          formattedDuration: `${padToTwo(plan.duration)} meses`,
-        }))
-      )
+    setPlansList(
+      response.data.splice(0, 10).map(plan => ({
+        ...plan,
+        formattedPrice: formatPrice(plan.price),
+        formattedDuration: `${padToTwo(plan.duration)} meses`,
+      }))
+    )
+
+    if (response.data.length < 11) {
+      setLastPage(true)
+      return
     }
 
-    getPlansList()
+    setLastPage(false)
+  }
+
+  useEffect(() => {
+    getPlansList(1)
   }, [])
 
   async function handleDeletePlan(id) {
@@ -43,6 +53,18 @@ export default function ListPlans() {
     } catch (error) {
       console.tron.log(error.response)
     }
+  }
+
+  async function handleNextPage() {
+    if (lastPage) return
+    getPlansList(currentPage + 1)
+    setCurrentPage(currentPage + 1)
+  }
+
+  async function handlePreviousPage() {
+    if (currentPage < 1) return
+    setCurrentPage(currentPage - 1)
+    getPlansList(currentPage - 1)
   }
 
   return (
@@ -103,6 +125,25 @@ export default function ListPlans() {
           </tbody>
         </StudentList>
       </div>
+
+      <Pagination>
+        <button
+          type="button"
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          <MdArrowBack
+            size={20}
+            color={currentPage === 1 ? '#ddd' : '#ee4d64'}
+          />
+        </button>
+
+        <span>{currentPage}</span>
+
+        <button type="button" onClick={handleNextPage} disabled={lastPage}>
+          <MdArrowForward size={20} color={lastPage ? '#ddd' : '#ee4d64'} />
+        </button>
+      </Pagination>
     </Container>
   )
 }

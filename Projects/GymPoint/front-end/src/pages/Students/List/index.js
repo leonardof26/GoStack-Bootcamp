@@ -18,12 +18,14 @@ export default function List() {
   const [currentPage, setCurrentPage] = useState(1)
   const [lastPage, setLastPage] = useState(false)
 
+  const resultsPerPage = 10
+
   async function getStudentsList(page) {
-    const response = await api.get(`students/${page}`)
+    const response = await api.get(`students/${page}/${resultsPerPage}`)
 
-    setStudentsList(response.data.slice(0, 10))
+    setStudentsList(response.data.slice(0, resultsPerPage))
 
-    if (response.data.length < 11) {
+    if (response.data.length <= resultsPerPage) {
       setLastPage(true)
       return
     }
@@ -37,7 +39,7 @@ export default function List() {
 
   async function filerStudentByName(data) {
     const { name } = data
-    const response = await api.get(`/students/${name}`)
+    const response = await api.get(`/students/search/${name}`)
 
     setStudentsList(response.data)
   }

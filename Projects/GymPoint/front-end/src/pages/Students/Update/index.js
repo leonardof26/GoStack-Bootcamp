@@ -50,7 +50,7 @@ export default function StudentUpdate({ history, location }) {
     )
 
     try {
-      await api.put('students', {
+      await api.put(`students/${student.id}`, {
         ...data,
         height: formattedHeight,
       })

@@ -18,22 +18,24 @@ export default function ListPlans() {
   const [currentPage, setCurrentPage] = useState(1)
   const [lastPage, setLastPage] = useState(false)
 
+  const resultsPerPage = 10
+
   function padToTwo(num) {
     return num < 10 ? `0${num}` : num
   }
 
   async function getPlansList(page) {
-    const response = await api.get(`/plans/actives/${page}`)
+    const response = await api.get(`/plans/${page}/${resultsPerPage}`)
 
     setPlansList(
-      response.data.splice(0, 10).map(plan => ({
+      response.data.slice(0, resultsPerPage).map(plan => ({
         ...plan,
         formattedPrice: formatPrice(plan.price),
         formattedDuration: `${padToTwo(plan.duration)} meses`,
       }))
     )
 
-    if (response.data.length < 11) {
+    if (response.data.length <= resultsPerPage) {
       setLastPage(true)
       return
     }

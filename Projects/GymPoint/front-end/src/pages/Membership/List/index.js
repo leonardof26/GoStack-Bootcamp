@@ -24,11 +24,13 @@ export default function MembershipsList() {
   const [currentPage, setCurrentPage] = useState(1)
   const [lastPage, setLastPage] = useState(false)
 
+  const resultsPerPage = 10
+
   async function getMembershipList(page) {
-    const response = await api.get(`/membership/${page}`)
+    const response = await api.get(`/membership/${page}/${resultsPerPage}`)
 
     setMembershipList(
-      response.data.slice(0, 10).map(membership => ({
+      response.data.slice(0, resultsPerPage).map(membership => ({
         ...membership,
         formattedStartDate: format(
           parseISO(membership.start_date),
@@ -38,7 +40,7 @@ export default function MembershipsList() {
       }))
     )
 
-    if (response.data.length < 11) {
+    if (response.data.length <= resultsPerPage) {
       setLastPage(true)
       return
     }

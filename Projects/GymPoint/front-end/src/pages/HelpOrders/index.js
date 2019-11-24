@@ -21,12 +21,14 @@ export default function HelpOrder() {
   const [currentPage, setCurrentPage] = useState(1)
   const [lastPage, setLastPage] = useState(false)
 
+  const resultsPerPage = 10
+
   async function getHelpOrderList(page) {
-    const response = await api.get(`/help-orders/${page}`)
+    const response = await api.get(`/help-orders/${page}/${resultsPerPage}`)
 
-    setHelpOrderList(response.data.slice(0, 10))
+    setHelpOrderList(response.data.slice(0, resultsPerPage))
 
-    if (response.data.length < 11) {
+    if (response.data.length <= resultsPerPage) {
       setLastPage(true)
       return
     }
@@ -36,7 +38,7 @@ export default function HelpOrder() {
 
   useEffect(() => {
     getHelpOrderList(1)
-  }, [showModal])
+  }, [])
 
   function handleOpenModal(question) {
     setSelectedQuestion(question)
@@ -53,6 +55,11 @@ export default function HelpOrder() {
     if (currentPage < 1) return
     setCurrentPage(currentPage - 1)
     getHelpOrderList(currentPage - 1)
+  }
+
+  function handleCloseModal() {
+    setShowModal(false)
+    getHelpOrderList(currentPage)
   }
 
   return (
@@ -117,7 +124,7 @@ export default function HelpOrder() {
 
       <HelpOrderModal
         show={showModal}
-        handleClose={() => setShowModal(false)}
+        handleClose={handleCloseModal}
         helpOrder={selectedQuestion}
       />
     </Container>

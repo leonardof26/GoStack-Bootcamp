@@ -58,13 +58,13 @@ export default function MembershipUpdate({ history, location }) {
 
   useEffect(() => {
     async function loadPlans() {
-      const response = await api.get('plans')
+      const response = await api.get('plans/1/100')
 
       setPlansList(response.data)
     }
 
     async function loadStudents() {
-      const response = await api.get('students')
+      const response = await api.get('students/1/100')
 
       setStudentsList(response.data)
     }

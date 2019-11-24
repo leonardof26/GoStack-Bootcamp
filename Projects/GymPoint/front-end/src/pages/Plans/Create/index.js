@@ -23,7 +23,7 @@ import {
 export default function PlanCreate({ history }) {
   const [duration, setDuration] = useState()
   const [monthlyPrice, setMonthlyPrice] = useState()
-  const [totalPrice, setTotalPrice] = useState()
+  const [totalPrice, setTotalPrice] = useState('')
 
   const schema = Yup.object().shape({
     title: Yup.string().required('O nome é obrigatório'),
@@ -48,7 +48,7 @@ export default function PlanCreate({ history }) {
 
   useEffect(() => {
     const duartionNum = parseInt(duration, 10)
-    const priceNum = parseInt(monthlyPrice, 10)
+    const priceNum = parseFloat(monthlyPrice, 10)
 
     setTotalPrice(
       formatPrice(typeof duartionNum && priceNum ? duartionNum * priceNum : 0)

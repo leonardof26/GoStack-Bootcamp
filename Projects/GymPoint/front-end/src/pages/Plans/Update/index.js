@@ -51,7 +51,7 @@ export default function StudentUpdate({ history, location }) {
 
   useEffect(() => {
     const duartionNum = parseInt(duration, 10)
-    const priceNum = parseInt(monthlyPrice, 10)
+    const priceNum = parseFloat(monthlyPrice, 10)
 
     setTotalPrice(
       formatPrice(typeof duartionNum && priceNum ? duartionNum * priceNum : 0)

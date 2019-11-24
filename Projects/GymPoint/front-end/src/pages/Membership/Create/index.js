@@ -47,13 +47,13 @@ export default function MembershipCreate({ history }) {
 
   useEffect(() => {
     async function loadPlans() {
-      const response = await api.get('plans')
+      const response = await api.get('plans/1/100')
 
       setPlansList(response.data)
     }
 
     async function loadStudents() {
-      const response = await api.get('students')
+      const response = await api.get('students/1/100')
 
       setStudentsList(response.data)
     }
@@ -89,7 +89,7 @@ export default function MembershipCreate({ history }) {
       history.push('/memberships/list')
     } catch (error) {
       toast.error(
-        'Erro ao atulizar matricula. Verifique se o aluno não tem outra matricula ativa'
+        'Erro ao atualizar matricula. Verifique se o aluno não tem outra matricula ativa'
       )
     }
   }

@@ -1,11 +1,20 @@
 import React from 'react'
 
-import { View, Text } from 'react-native'
+import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react'
 
-export default function App() {
+import App from './App'
+
+import './config/reactotronConfig'
+
+import { store, persistor } from './store'
+
+export default function Index() {
   return (
-    <View>
-      <Text>Ola Mundo</Text>
-    </View>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
   )
 }

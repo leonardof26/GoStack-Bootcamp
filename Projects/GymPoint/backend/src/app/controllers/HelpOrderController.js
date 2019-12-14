@@ -30,25 +30,35 @@ class HelpOrderController {
 
   async index(req, res) {
     const schema = Yup.object().shape({
-      id: Yup.number().required(),
+      id: Yup.number(),
+      page: Yup.number().required(),
+      limit: Yup.number().required(),
     })
 
     const studentId = req.params.id
 
-    if (!(await schema.isValid({ id: studentId })) && studentId) {
+    if (!(await schema.isValid(req.params))) {
       return res.status(400).json({ error: 'Validation Fails' })
     }
 
-    const response = studentId
+    const { page, limit } = req.params
+
+    const offset = (page - 1) * limit
+
+    const helpOrders = studentId
       ? await HelpOrder.findAll({
           where: { student_id: studentId },
           include: [{ model: Student, attributes: ['id', 'name'] }],
+          limit,
+          offset,
         })
       : await HelpOrder.findAll({
           include: [{ model: Student, attributes: ['id', 'name'] }],
+          limit: limit + 1,
+          offset,
         })
 
-    return res.json(response)
+    return res.json(helpOrders)
   }
 
   async update(req, res) {
@@ -76,7 +86,7 @@ class HelpOrderController {
         .json({ error: 'Question already answered by someonelse' })
     }
 
-    await helpOrder.update(req.body)
+    await helpOrder.update({ ...req.body, answer_at: new Date() })
 
     const student = await Student.findByPk(helpOrder.student_id)
 

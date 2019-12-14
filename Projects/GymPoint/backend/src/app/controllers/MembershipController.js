@@ -69,6 +69,19 @@ class MembershipController {
   }
 
   async index(req, res) {
+    const schema = Yup.object().shape({
+      page: Yup.number().required(),
+      limit: Yup.number().required(),
+    })
+
+    if (!(await schema.isValid(req.params))) {
+      return res.status(400).json({ error: 'Validation Fails' })
+    }
+
+    const { page, limit } = req.params
+
+    const offset = (page - 1) * limit
+
     const mbrships = await Membership.findAll({
       attributes: [
         'id',
@@ -83,9 +96,11 @@ class MembershipController {
         { model: Student, attributes: ['id', 'name'] },
         { model: Plan, attributes: ['id', 'title'] },
       ],
+      limit: limit + 1,
+      offset,
     })
 
-    return res.json(mbrships)
+    return res.json(mbrships.splice(0, limit))
   }
 
   async update(req, res) {

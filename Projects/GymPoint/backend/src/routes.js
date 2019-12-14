@@ -12,32 +12,33 @@ import authMiddleware from './app/middlewares/auth'
 const routes = new Router()
 
 routes.post('/students', StudentController.store)
+routes.get('/students/:id', StudentController.index)
+
 routes.post('/sessions', SessionController.store)
 
 routes.post('/students/:id/checkins', CheckinController.store)
-routes.get('/students/:id/checkins', CheckinController.index)
+routes.get('/students/:id/checkins/:page/:limit', CheckinController.index)
 
 routes.post('/students/:id/help-orders', HelpOrderController.store)
-routes.get('/students/:id/help-orders', HelpOrderController.index)
+routes.get('/students/:id/help-orders/:page/:limit', HelpOrderController.index)
 
 routes.use(authMiddleware)
-routes.put('/students', StudentController.update)
-routes.get('/students', StudentController.index)
-routes.get('/students/:student', StudentController.index)
-routes.delete('/students/:student', StudentController.delete)
+routes.put('/students/:id', StudentController.update)
+routes.get('/students/:page/:limit', StudentController.index)
+routes.get('/students/search/:name', StudentController.index)
+routes.delete('/students/:id', StudentController.delete)
 
 routes.post('/plans', PlanController.store)
-routes.get('/plans', PlanController.index)
-routes.get('/plans/actives', PlanController.index)
+routes.get('/plans/:page/:limit', PlanController.index)
 routes.put('/plans/:id', PlanController.update)
 routes.delete('/plans/:id', PlanController.delete)
 
 routes.post('/membership', MembershipController.store)
-routes.get('/membership', MembershipController.index)
+routes.get('/membership/:page/:limit', MembershipController.index)
 routes.put('/membership/:id', MembershipController.update)
 routes.delete('/membership/:id', MembershipController.delete)
 
 routes.put('/help-orders/:id/answer', HelpOrderController.update)
-routes.get('/help-orders', HelpOrderController.index)
+routes.get('/help-orders/:page/:limit', HelpOrderController.index)
 
 export default routes

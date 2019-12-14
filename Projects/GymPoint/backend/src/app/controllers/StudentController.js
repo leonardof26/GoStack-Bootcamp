@@ -5,7 +5,6 @@ import Student from '../models/Student'
 
 class StudentController {
   async store(req, res) {
-    console.log(req)
     const schema = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string()
@@ -46,26 +45,49 @@ class StudentController {
 
   async index(req, res) {
     const schema = Yup.object().shape({
-      student: Yup.string().required(),
+      name: Yup.string(),
+      page: Yup.number(),
+      limit: Yup.number(),
+      id: Yup.number(),
     })
 
-    const { student } = req.params
-
-    if (!(await schema.isValid({ student })) && student) {
+    if (!(await schema.isValid(req.params))) {
       return res.status(400).json({ error: 'Validation Fails' })
     }
 
-    const response = student
-      ? await Student.findAll({
-          where: { name: { [Op.like]: `%${student}%` } },
-        })
-      : await Student.findAll()
+    const { name, page, limit, id } = req.params
 
-    return res.json(response)
+    const offset = (page - 1) * limit
+
+    if (id) {
+      const student = await Student.findByPk(id)
+
+      if (!student) {
+        return res.status(400).json({ error: 'Student does not exist' })
+      }
+
+      return res.json(student)
+    }
+
+    if (name) {
+      const students = await Student.findAll({
+        where: { name: { [Op.like]: `%${name}%` } },
+      })
+
+      return res.json(students)
+    }
+
+    const students = await Student.findAll({
+      limit: limit + 1,
+      offset,
+    })
+
+    return res.json(students)
   }
 
   async update(req, res) {
     const schema = Yup.object().shape({
+      id: Yup.number().required(),
       name: Yup.string(),
       email: Yup.string()
         .email()
@@ -80,47 +102,53 @@ class StudentController {
         .lessThan(3.0),
     })
 
-    if (!(await schema.isValid(req.body))) {
+    const { id } = req.params
+
+    if (!(await schema.isValid({ ...req.body, id }))) {
       return res.status(400).json({ error: 'Validation Fails' })
     }
 
-    const { email, newEmail } = req.body
+    const student = await Student.findByPk(id)
 
-    const student = await Student.findOne({ where: { email } })
+    if (!student) {
+      return res.status(400).json({ error: 'student does not exist' })
+    }
 
-    if (newEmail) {
+    const { email } = req.body
+
+    if (email !== student.email) {
       const studentExists = await Student.findOne({
-        where: { email: newEmail },
+        where: { email },
       })
 
       if (studentExists) {
-        return res.status(400).json({ error: 'student already exists' })
+        return res.status(400).json({ error: 'email already taken' })
       }
     }
 
-    const { id, name, age, height, weight } = await student.update(req.body)
+    const { name, age, height, weight } = await student.update(req.body)
 
     return res.json({ id, name, email, age, height, weight })
   }
 
   async delete(req, res) {
     const schema = Yup.object().shape({
-      student: Yup.number().required(),
+      id: Yup.number().required(),
     })
 
-    const studentId = req.params.student
-
-    if (!(await schema.isValid({ student: studentId }))) {
+    if (!(await schema.isValid(req.params))) {
       return res.status(400).json({ error: 'Validation Fails' })
     }
 
-    const student = Student.findByPk(studentId)
+    const { id } = req.params
+
+    const student = Student.findByPk(id)
 
     if (!student) {
       return res.status(400).json({ error: 'Student does not exists' })
     }
 
-    await Student.destroy({ where: { id: studentId } })
+    await Student.destroy({ where: { id } })
 
     return res.json({
       message: `Student: ${student.id} deleted successful`,

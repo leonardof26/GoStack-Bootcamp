@@ -34,17 +34,24 @@ class PlanController {
   }
 
   async index(req, res) {
-    if (req.route.path === '/plans/actives') {
-      const plans = await Plan.findAll({
-        where: { active: true },
-        attributes: ['id', 'title', 'duration', 'price', 'active'],
-      })
+    const schema = Yup.object().shape({
+      page: Yup.number().required(),
+      limit: Yup.number().required(),
+    })
 
-      return res.json(plans)
+    if (!(await schema.isValid(req.params))) {
+      return res.status(400).json({ error: 'Validation Fails' })
     }
 
+    const { page, limit } = req.params
+
+    const offset = (page - 1) * limit
+
     const plans = await Plan.findAll({
+      where: { active: true },
       attributes: ['id', 'title', 'duration', 'price', 'active'],
+      limit: limit + 1,
+      offset,
     })
 
     return res.json(plans)
@@ -54,9 +61,7 @@ class PlanController {
     const schema = Yup.object().shape({
       id: Yup.number().required(),
       title: Yup.string().required(),
-      duration: Yup.number()
-        .moreThan(0)
-        .lessThan(13),
+      duration: Yup.number().moreThan(0),
       price: Yup.number().moreThan(0),
     })
 

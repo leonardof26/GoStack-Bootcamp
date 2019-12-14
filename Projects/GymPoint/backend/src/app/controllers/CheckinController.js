@@ -41,19 +41,24 @@ class CheckinController {
 
   async index(req, res) {
     const schema = Yup.object().shape({
-      studentId: Yup.number().required(),
+      id: Yup.number().required(),
+      page: Yup.number().required(),
+      limit: Yup.number().required(),
     })
 
-    if (!(await schema.isValid({ studentId: req.params.id }))) {
+    if (!(await schema.isValid(req.params))) {
       return res.status(400).json({ error: 'Validation Fails' })
     }
 
-    const userId = req.params.id
+    const { id, page, limit } = req.params
+
+    const offset = (page - 1) * limit
 
     const checkins = await Checkin.findAll({
-      where: { student_id: userId },
+      where: { student_id: id },
       order: [['created_at', 'DESC']],
-      limit: 6,
+      limit,
+      offset,
       attributes: ['id', 'student_id', 'created_at'],
     })
 

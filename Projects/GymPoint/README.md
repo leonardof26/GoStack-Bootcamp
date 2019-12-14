@@ -24,8 +24,6 @@ Next, there are some images from the final application.
 <img src="https://i.ibb.co/3rN9dpJ/Screen-Shot-2019-12-14-at-4-27-39-PM.png" width="250" height="400">
 <img src="https://i.ibb.co/c2zsFTy/Screen-Shot-2019-12-14-at-4-27-50-PM.png" width="250" height="400">
 
-![Image1 of GymPoint](https://i.ibb.co/jMVBbn7/Screen-Shot-2019-12-14-at-4-27-34-PM.png) ![Image2 of Gympoint](https://i.ibb.co/3rN9dpJ/Screen-Shot-2019-12-14-at-4-27-39-PM.png) ![Image3 of Gympoint](https://i.ibb.co/c2zsFTy/Screen-Shot-2019-12-14-at-4-27-50-PM.png)
-
 # How to run the project
 
 To run this project you'll need to have the following tools installed in your computer:

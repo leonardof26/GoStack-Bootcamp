@@ -14,9 +14,15 @@ Next, there are some images from the final application.
 
 ## Gym staff side of the application
 
-![Image1 of GymPoint](https://i.ibb.co/Hp3RMft/Screen-Shot-2019-12-14-at-4-36-39-PM.png) ![Image2 of Gympoint](https://i.ibb.co/3BZ3S9D/Screen-Shot-2019-12-14-at-4-37-40-PM.png) ![Image3 of Gympoint](https://i.ibb.co/t8J25CP/Screen-Shot-2019-12-14-at-4-37-48-PM.png)
+<img src="https://i.ibb.co/Hp3RMft/Screen-Shot-2019-12-14-at-4-36-39-PM.png" width="250" height="200">
+<img src="https://i.ibb.co/3BZ3S9D/Screen-Shot-2019-12-14-at-4-37-40-PM.png" width="250" height="200">
+<img src="https://i.ibb.co/t8J25CP/Screen-Shot-2019-12-14-at-4-37-48-PM.png" width="250" height="200">
 
 ## Student side of the application
+
+<img src="https://i.ibb.co/jMVBbn7/Screen-Shot-2019-12-14-at-4-27-34-PM.png" width="250" height="400">
+<img src="https://i.ibb.co/3rN9dpJ/Screen-Shot-2019-12-14-at-4-27-39-PM.png" width="250" height="400">
+<img src="https://i.ibb.co/c2zsFTy/Screen-Shot-2019-12-14-at-4-27-50-PM.png" width="250" height="400">
 
 ![Image1 of GymPoint](https://i.ibb.co/jMVBbn7/Screen-Shot-2019-12-14-at-4-27-34-PM.png) ![Image2 of Gympoint](https://i.ibb.co/3rN9dpJ/Screen-Shot-2019-12-14-at-4-27-39-PM.png) ![Image3 of Gympoint](https://i.ibb.co/c2zsFTy/Screen-Shot-2019-12-14-at-4-27-50-PM.png)
 
